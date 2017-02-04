@@ -1,6 +1,8 @@
 package com.camlacademy.cowarrows;
 
 import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -19,7 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class CowArrowsPluginV2 extends JavaPlugin implements Listener{
 
 	public static final String CONFIG_KEY_ALLOW_COW_ARROW_RECIPE = "allowCowArrowRecipe";
-	
+	private boolean spawnMushroomCows = false;
 	@Override
 	
 	
@@ -32,6 +34,12 @@ public class CowArrowsPluginV2 extends JavaPlugin implements Listener{
 		
 		registerRecipes();
 		
+		getCommand("toggleMushroomCows").setExecutor(this);
+		
+	}
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		spawnMushroomCows = !spawnMushroomCows;
+		return true;
 	}
 	private void registerRecipes() {
 		boolean allowCowArrowRecipe = getConfig().getBoolean(CONFIG_KEY_ALLOW_COW_ARROW_RECIPE);
@@ -155,9 +163,12 @@ public class CowArrowsPluginV2 extends JavaPlugin implements Listener{
 
 
 		//spawn the cow
+		if (spawnMushroomCows) {
+			event.getEntity().getWorld().spawnEntity(event.getEntity().getLocation(), EntityType.MUSHROOM_COW);
+		} else {
 		event.getEntity().getWorld().spawnEntity(event.getEntity().getLocation(), EntityType.COW);
 
-
+		}
 		//remove the arrow so players cant pick it up and spawn more cows for free
 		event.getEntity().remove();
 	}
